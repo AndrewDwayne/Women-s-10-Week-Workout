@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Women's 10-Wk Muscle-Building Tracker</title>
+<style>
+  :root {
+    --primary: #E91E63;
+    --primary-dark: #C2185B;
+    --dark: #121212;
+    --card: #1E1E1E;
+    --text: #EDEDED;
+    --accent: #00E676;
+    --tempo: #9C27B0;
+    --band: #FF9800;
+    --border: #333;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    margin: 0;
+    padding: 12px;
+    padding-bottom: 95px;
+  }
+  h1 {
+    font-size: 1.15rem;
+    color: var(--primary);
+    margin: 2px 0 6px 0;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .control-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  select {
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: #FFF;
+    padding: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    width: 100%;
+    outline: none;
+  }
+  .phase-banner {
+    background: #252525;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 0.75rem;
+    line-height: 1.35;
+    margin-bottom: 12px;
+  }
+  .phase-banner strong { color: var(--primary); }
+  .day-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .day-btn {
+    flex: 1;
+    padding: 9px 4px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #1C1C1C;
+    color: #888;
+    font-weight: 700;
+    font-size: 0.72rem;
+    cursor: pointer;
+  }
+  .day-btn.active {
+    background: var(--primary);
+    color: #FFF;
+    border-color: var(--primary);
+  }
+  .day-content { display: none; }
+  .day-content.active { display: block; }
+  .card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--primary);
+  }
+  .card.safe { border-left-color: #00BCD4; }
+  .card.cond { border-left-color: var(--tempo); }
+  .ex-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modifier-tag {
+    font-size: 0.65rem;
+    color: #FFF;
+    background: var(--tempo);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+  .modifier-tag.band { background: var(--band); color: #000; }
+  .cue {
+    font-size: 0.72rem;
+    color: #AAA;
+    margin: 3px 0 8px 0;
+    line-height: 1.3;
+  }
+  .set-grid-header {
+    display: grid;
+    grid-template-columns: 28px 1fr 1fr 1fr 38px;
+    gap: 6px;
+    font-size: 0.68rem;
+    color: #777;
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .set-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 1fr 1fr 38px;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .set-num {
+    font-size: 0.75rem;
+    color: #888;
+    text-align: center;
+    font-weight: bold;
+  }
+  input {
+    background: #282828;
+    border: 1px solid #3A3A3A;
+    border-radius: 6px;
+    color: #FFF;
+    padding: 7px 0;
+    text-align: center;
+    font-size: 0.85rem;
+    width: 100%;
+    box-sizing: border-box;
+    -moz-appearance: textfield;
+  }
+  input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: #333;
+  }
+  .check-btn {
+    background: #2A2A2A;
+    border: 1px solid #444;
+    color: #888;
+    border-radius: 6px;
+    height: 32px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .check-btn.done {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+    font-weight: bold;
+  }
+  .timer-bar {
+    position: fixed;
+    bottom: 10px;
+    left: 12px;
+    right: 12px;
+    background: #1C1C1E;
+    border: 1px solid #333;
+    border-radius: 40px;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+    z-index: 999;
+  }
+  .timer-text {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .reset-btn {
+    background: var(--primary);
+    border: none;
+    color: #FFF;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>10-Wk Muscle Program</h1>
+
+<div class="control-panel">
+  <select id="weekSelector" onchange="switchWeek()">
+    <option value="1">Week 1 (Baseline 12-15r)</option>
+    <option value="2">Week 2 (Progress Load)</option>
+    <option value="3">Week 3 (+ Tempo 3-1-1)</option>
+    <option value="4">Week 4 (+ Band Overload)</option>
+    <option value="5">Week 5 (Tempo Expansion)</option>
+    <option value="6">Week 6 (Band Expansion)</option>
+    <option value="7">Week 7 (Performance 8-12r)</option>
+    <option value="8">Week 8 (4 Rounds Peak)</option>
+    <option value="9">Week 9 (Max Intensity)</option>
+    <option value="10">Week 10 (Deload & Test)</option>
+  </select>
+
+  <select id="phaseDisplay" disabled style="opacity:0.85;">
+    <option>Target: 12-15 Reps | Rest: 45s</option>
+  </select>
+</div>
+
+<div class="phase-banner" id="phaseDesc">
+  <strong>Week 1: Foundation.</strong> 3 Rounds × 12–15 Reps (Plank 30s, Carry 30m). Exercise rest: 45s, Round rest: 90s. RPE 6–7.
+</div>
+
+<div class="day-nav">
+  <button class="day-btn active" onclick="switchDay('day1', this)">Day 1: Lower/Push-Pull</button>
+  <button class="day-btn" onclick="switchDay('day2', this)">Day 2: Upper/Core</button>
+  <button class="day-btn" onclick="switchDay('day3', this)">Day 3: Full Body/Carry</button>
+</div>
+
+<!-- ================= DAY 1 ================= -->
+<div id="day1" class="day-content active">
+  <div class="card safe">
+    <div class="ex-title"><span>Warm-Up (5 min)</span></div>
+    <div class="cue">2m brisk walk → Bodyweight squats x10 → Glute bridges x10 → Arm circles x10 → Band pull-aparts x15.</div>
+  </div>
+
+  <div class="card">
+    <div class="ex-title"><span>1. Goblet Squat (DB)</span><span id="d1_e1_mod" class="modifier-tag" style="display:none;">3-1-1 Tempo</span></div>
+    <div class="cue">Keep chest proud, elbows tucked inside knees at bottom.</div>
+    <div class="set-grid-header"><span>RND</span><span>LBS</span><span>REPS</span><span>RIR</span><span>DONE</span></div>
+    <div class="set-row"><span class="set-num">R1</span><input type="number" id="w_d1_e1_r1_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e1_r1_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e1_r1_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e1_r1_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R2</span><input type="number" id="w_d1_e1_r2_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e1_r2_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e1_r2_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e1_r2_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R3</span><input type="number" id="w_d1_e1_r3_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e1_r3_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e1_r3_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e1_r3_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row" id="d1_e1_r4_row" style="display:none;"><span class="set-num">R4</span><input type="number" id="w_d1_e1_r4_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e1_r4_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e1_r4_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e1_r4_b" onclick="toggleSet(this, 45)">✓</button></div>
+  </div>
+
+  <div class="card">
+    <div class="ex-title"><span>2. DB Romanian Deadlift (RDL)</span><span id="d1_e2_mod" class="modifier-tag" style="display:none;">+ Band</span></div>
+    <div class="cue">Soft knees, push hips back to the wall, keep dumbbells skimming thighs.</div>
+    <div class="set-grid-header"><span>RND</span><span>LBS</span><span>REPS</span><span>RIR</span><span>DONE</span></div>
+    <div class="set-row"><span class="set-num">R1</span><input type="number" id="w_d1_e2_r1_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e2_r1_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e2_r1_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e2_r1_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R2</span><input type="number" id="w_d1_e2_r2_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e2_r2_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e2_r2_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e2_r2_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R3</span><input type="number" id="w_d1_e2_r3_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e2_r3_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e2_r3_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e2_r3_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row" id="d1_e2_r4_row" style="display:none;"><span class="set-num">R4</span><input type="number" id="w_d1_e2_r4_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e2_r4_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e2_r4_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e2_r4_b" onclick="toggleSet(this, 45)">✓</button></div>
+  </div>
+
+  <div class="card">
+    <div class="ex-title"><span>3. DB Floor / Bench Press</span><span id="d1_e3_mod" class="modifier-tag" style="display:none;">3-1-1 Tempo</span></div>
+    <div class="cue">Elbows ~45° from ribs, press straight up over chest.</div>
+    <div class="set-grid-header"><span>RND</span><span>LBS</span><span>REPS</span><span>RIR</span><span>DONE</span></div>
+    <div class="set-row"><span class="set-num">R1</span><input type="number" id="w_d1_e3_r1_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e3_r1_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e3_r1_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e3_r1_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R2</span><input type="number" id="w_d1_e3_r2_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e3_r2_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e3_r2_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e3_r2_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R3</span><input type="number" id="w_d1_e3_r3_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e3_r3_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e3_r3_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e3_r3_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row" id="d1_e3_r4_row" style="display:none;"><span class="set-num">R4</span><input type="number" id="w_d1_e3_r4_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e3_r4_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e3_r4_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e3_r4_b" onclick="toggleSet(this, 45)">✓</button></div>
+  </div>
+
+  <div class="card">
+    <div class="ex-title"><span>4. Band or DB Bent-Over Row</span><span id="d1_e4_mod" class="modifier-tag" style="display:none;">3-1-1 Tempo</span></div>
+    <div class="cue">Squeeze shoulder blades together, pull elbows toward hips.</div>
+    <div class="set-grid-header"><span>RND</span><span>LBS</span><span>REPS</span><span>RIR</span><span>DONE</span></div>
+    <div class="set-row"><span class="set-num">R1</span><input type="number" id="w_d1_e4_r1_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e4_r1_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e4_r1_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e4_r1_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R2</span><input type="number" id="w_d1_e4_r2_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e4_r2_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e4_r2_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e4_r2_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R3</span><input type="number" id="w_d1_e4_r3_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e4_r3_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e4_r3_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e4_r3_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row" id="d1_e4_r4_row" style="display:none;"><span class="set-num">R4</span><input type="number" id="w_d1_e4_r4_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d1_e4_r4_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d1_e4_r4_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d1_e4_r4_b" onclick="toggleSet(this, 45)">✓</button></div>
+  </div>
+
+  <div class="card cond">
+    <div class="ex-title"><span>Conditioning & Cool-Down</span></div>
+    <div class="cue" id="d1_cardio">🏃 10 min steady, moderate incline walk.<br>🧘 Quad, hamstring, doorway chest stretch.</div>
+  </div>
+</div>
+
+<!-- ================= DAY 2 ================= -->
+<div id="day2" class="day-content">
+  <div class="card safe">
+    <div class="ex-title"><span>Warm-Up (5 min)</span></div>
+    <div class="cue">2m jumping jacks/march → Band external rotations x15 → Arm swings → Torso twists x10.</div>
+  </div>
+
+  <div class="card">
+    <div class="ex-title"><span>1. DB Shoulder Press</span><span id="d2_e1_mod" class="modifier-tag" style="display:none;">Neutral Grip</span></div>
+    <div class="cue">Keep core locked, press straight up without arching lower back.</div>
+    <div class="set-grid-header"><span>RND</span><span>LBS</span><span>REPS</span><span>RIR</span><span>DONE</span></div>
+    <div class="set-row"><span class="set-num">R1</span><input type="number" id="w_d2_e1_r1_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d2_e1_r1_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d2_e1_r1_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d2_e1_r1_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R2</span><input type="number" id="w_d2_e1_r2_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d2_e1_r2_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d2_e1_r2_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d2_e1_r2_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R3</span><input type="number" id="w_d2_e1_r3_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d2_e1_r3_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d2_e1_r3_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d2_e1_r3_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row" id="d2_e1_r4_row" style="display:none;"><span class="set-num">R4</span><input type="number" id="w_d2_e1_r4_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d2_e1_r4_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d2_e1_r4_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d2_e1_r4_b" onclick="toggleSet(this, 45)">✓</button></div>
+  </div>
+
+  <div class="card">
+    <div class="ex-title"><span>2. Band Lat Pulldown or DB Row</span><span id="d2_e2_mod" class="modifier-tag" style="display:none;">3-1-1 Tempo</span></div>
+    <div class="cue">Pull band wide or row DB back to pocket, full control.</div>
+    <div class="set-grid-header"><span>RND</span><span>LBS</span><span>REPS</span><span>RIR</span><span>DONE</span></div>
+    <div class="set-row"><span class="set-num">R1</span><input type="number" id="w_d2_e2_r1_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d2_e2_r1_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d2_e2_r1_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d2_e2_r1_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R2</span><input type="number" id="w_d2_e2_r2_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d2_e2_r2_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d2_e2_r2_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d2_e2_r2_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R3</span><input type="number" id="w_d2_e2_r3_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d2_e2_r3_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d2_e2_r3_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d2_e2_r3_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row" id="d2_e2_r4_row" style="display:none;"><span class="set-num">R4</span><input type="number" id="w_d2_e2_r4_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d2_e2_r4_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d2_e2_r4_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d2_e2_r4_b" onclick="toggleSet(this, 45)">✓</button></div>
+  </div>
+
+  <div class="card">
+    <div class="ex-title"><span>3. DB Lateral Raise</span><span id="d2_e3_mod" class="modifier-tag" style="display:none;">3-1-1 Tempo</span></div>
+    <div class="cue">Slight forward lean, raise to shoulder height with control (no swinging).</div>
+    <div class="set-grid-header"><span>RND</span><span>LBS</span><span>REPS</span><span>RIR</span><span>DONE</span></div>
+    <div class="set-row"><span class="set-num">R1</span><input type="number" id="w_d2_e3_r1_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d2_e3_r1_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d2_e3_r1_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d2_e3_r1_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R2</span><input type="number" id="w_d2_e3_r2_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d2_e3_r2_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d2_e3_r2_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d2_e3_r2_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R3</span><input type="number" id="w_d2_e3_r3_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d2_e3_r3_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d2_e3_r3_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d2_e3_r3_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row" id="d2_e3_r4_row" style="display:none;"><span class="set-num">R4</span><input type="number" id="w_d2_e3_r4_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d2_e3_r4_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d2_e3_r4_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d2_e3_r4_b" onclick="toggleSet(this, 45)">✓</button></div>
+  </div>
+
+  <div class="card">
+    <div class="ex-title"><span>4. Plank Hold</span><span id="d2_plank_time">30s Hold</span></div>
+    <div class="cue">Forearms down, tuck tailbone, squeeze glutes and abs tight.</div>
+    <div class="set-grid-header"><span>RND</span><span>TARGET</span><span>ACTUAL</span><span>REST</span><span>DONE</span></div>
+    <div class="set-row"><span class="set-num">R1</span><span style="font-size:0.75rem;text-align:center;">Hold</span><input type="number" id="w_d2_e4_r1_r" placeholder="30s" oninput="saveInput(this)"><span style="font-size:0.75rem;text-align:center;color:#666;">45s</span><button class="check-btn" id="w_d2_e4_r1_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R2</span><span style="font-size:0.75rem;text-align:center;">Hold</span><input type="number" id="w_d2_e4_r2_r" placeholder="30s" oninput="saveInput(this)"><span style="font-size:0.75rem;text-align:center;color:#666;">45s</span><button class="check-btn" id="w_d2_e4_r2_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R3</span><span style="font-size:0.75rem;text-align:center;">Hold</span><input type="number" id="w_d2_e4_r3_r" placeholder="30s" oninput="saveInput(this)"><span style="font-size:0.75rem;text-align:center;color:#666;">45s</span><button class="check-btn" id="w_d2_e4_r3_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row" id="d2_e4_r4_row" style="display:none;"><span class="set-num">R4</span><span style="font-size:0.75rem;text-align:center;">Hold</span><input type="number" id="w_d2_e4_r4_r" placeholder="30s" oninput="saveInput(this)"><span style="font-size:0.75rem;text-align:center;color:#666;">45s</span><button class="check-btn" id="w_d2_e4_r4_b" onclick="toggleSet(this, 45)">✓</button></div>
+  </div>
+
+  <div class="card cond">
+    <div class="ex-title"><span>Conditioning & Cool-Down</span></div>
+    <div class="cue" id="d2_cardio">🏃 10 min intervals (1 min brisk / 1 min easy x5).<br>🧘 Shoulder stretch, child's pose, seated spinal twist.</div>
+  </div>
+</div>
+
+<!-- ================= DAY 3 ================= -->
+<div id="day3" class="day-content">
+  <div class="card safe">
+    <div class="ex-title"><span>Warm-Up (5 min)</span></div>
+    <div class="cue">2m brisk walk → Walking lunges x10 → Band pull-aparts x15 → Arm circles.</div>
+  </div>
+
+  <div class="card">
+    <div class="ex-title"><span>1. DB Reverse Lunge</span><span id="d3_e1_mod" class="modifier-tag" style="display:none;">+ Band</span></div>
+    <div class="cue">Step back smoothly, keep front knee stacked over front ankle.</div>
+    <div class="set-grid-header"><span>RND</span><span>LBS</span><span>REPS</span><span>RIR</span><span>DONE</span></div>
+    <div class="set-row"><span class="set-num">R1</span><input type="number" id="w_d3_e1_r1_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d3_e1_r1_r" placeholder="10/s" oninput="saveInput(this)"><input type="number" id="w_d3_e1_r1_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d3_e1_r1_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R2</span><input type="number" id="w_d3_e1_r2_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d3_e1_r2_r" placeholder="10/s" oninput="saveInput(this)"><input type="number" id="w_d3_e1_r2_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d3_e1_r2_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R3</span><input type="number" id="w_d3_e1_r3_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d3_e1_r3_r" placeholder="10/s" oninput="saveInput(this)"><input type="number" id="w_d3_e1_r3_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d3_e1_r3_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row" id="d3_e1_r4_row" style="display:none;"><span class="set-num">R4</span><input type="number" id="w_d3_e1_r4_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d3_e1_r4_r" placeholder="10/s" oninput="saveInput(this)"><input type="number" id="w_d3_e1_r4_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d3_e1_r4_b" onclick="toggleSet(this, 45)">✓</button></div>
+  </div>
+
+  <div class="card">
+    <div class="ex-title"><span>2. DB Farmer's Carry</span><span id="d3_carry_dist">30m Carry</span></div>
+    <div class="cue">Stand tall, shoulders down/back, walk with deliberate steady cadence.</div>
+    <div class="set-grid-header"><span>RND</span><span>LBS</span><span>DIST</span><span>REST</span><span>DONE</span></div>
+    <div class="set-row"><span class="set-num">R1</span><input type="number" id="w_d3_e2_r1_w" placeholder="wt" oninput="saveInput(this)"><span style="font-size:0.75rem;text-align:center;">30m</span><span style="font-size:0.75rem;text-align:center;color:#666;">45s</span><button class="check-btn" id="w_d3_e2_r1_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R2</span><input type="number" id="w_d3_e2_r2_w" placeholder="wt" oninput="saveInput(this)"><span style="font-size:0.75rem;text-align:center;">30m</span><span style="font-size:0.75rem;text-align:center;color:#666;">45s</span><button class="check-btn" id="w_d3_e2_r2_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R3</span><input type="number" id="w_d3_e2_r3_w" placeholder="wt" oninput="saveInput(this)"><span style="font-size:0.75rem;text-align:center;">30m</span><span style="font-size:0.75rem;text-align:center;color:#666;">45s</span><button class="check-btn" id="w_d3_e2_r3_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row" id="d3_e2_r4_row" style="display:none;"><span class="set-num">R4</span><input type="number" id="w_d3_e2_r4_w" placeholder="wt" oninput="saveInput(this)"><span style="font-size:0.75rem;text-align:center;">30m</span><span style="font-size:0.75rem;text-align:center;color:#666;">45s</span><button class="check-btn" id="w_d3_e2_r4_b" onclick="toggleSet(this, 45)">✓</button></div>
+  </div>
+
+  <div class="card">
+    <div class="ex-title"><span>3. Band Woodchop</span><span id="d3_e3_mod" class="modifier-tag" style="display:none;">3-1-1 Tempo</span></div>
+    <div class="cue">Pivot on back foot, rotate smoothly through hips and core.</div>
+    <div class="set-grid-header"><span>RND</span><span>BAND</span><span>REPS</span><span>RIR</span><span>DONE</span></div>
+    <div class="set-row"><span class="set-num">R1</span><input type="text" id="w_d3_e3_r1_w" placeholder="Red" oninput="saveInput(this)"><input type="number" id="w_d3_e3_r1_r" placeholder="10/s" oninput="saveInput(this)"><input type="number" id="w_d3_e3_r1_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d3_e3_r1_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R2</span><input type="text" id="w_d3_e3_r2_w" placeholder="Red" oninput="saveInput(this)"><input type="number" id="w_d3_e3_r2_r" placeholder="10/s" oninput="saveInput(this)"><input type="number" id="w_d3_e3_r2_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d3_e3_r2_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R3</span><input type="text" id="w_d3_e3_r3_w" placeholder="Red" oninput="saveInput(this)"><input type="number" id="w_d3_e3_r3_r" placeholder="10/s" oninput="saveInput(this)"><input type="number" id="w_d3_e3_r3_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d3_e3_r3_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row" id="d3_e3_r4_row" style="display:none;"><span class="set-num">R4</span><input type="text" id="w_d3_e3_r4_w" placeholder="Red" oninput="saveInput(this)"><input type="number" id="w_d3_e3_r4_r" placeholder="10/s" oninput="saveInput(this)"><input type="number" id="w_d3_e3_r4_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d3_e3_r4_b" onclick="toggleSet(this, 45)">✓</button></div>
+  </div>
+
+  <div class="card">
+    <div class="ex-title"><span>4. DB Hip Thrust</span><span id="d3_e4_mod" class="modifier-tag" style="display:none;">3-1-1 Tempo</span></div>
+    <div class="cue">Shoulders on bench/couch, drive through heels, 2s hard squeeze at top.</div>
+    <div class="set-grid-header"><span>RND</span><span>LBS</span><span>REPS</span><span>RIR</span><span>DONE</span></div>
+    <div class="set-row"><span class="set-num">R1</span><input type="number" id="w_d3_e4_r1_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d3_e4_r1_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d3_e4_r1_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d3_e4_r1_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R2</span><input type="number" id="w_d3_e4_r2_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d3_e4_r2_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d3_e4_r2_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d3_e4_r2_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row"><span class="set-num">R3</span><input type="number" id="w_d3_e4_r3_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d3_e4_r3_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d3_e4_r3_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d3_e4_r3_b" onclick="toggleSet(this, 45)">✓</button></div>
+    <div class="set-row" id="d3_e4_r4_row" style="display:none;"><span class="set-num">R4</span><input type="number" id="w_d3_e4_r4_w" placeholder="wt" oninput="saveInput(this)"><input type="number" id="w_d3_e4_r4_r" placeholder="12" oninput="saveInput(this)"><input type="number" id="w_d3_e4_r4_i" placeholder="2" oninput="saveInput(this)"><button class="check-btn" id="w_d3_e4_r4_b" onclick="toggleSet(this, 45)">✓</button></div>
+  </div>
+
+  <div class="card cond">
+    <div class="ex-title"><span>Conditioning & Cool-Down</span></div>
+    <div class="cue" id="d3_cardio">🏃 12 min steady, moderate pace.<br>🧘 Hip flexor stretch, glute stretch, deep diaphragmatic breathing.</div>
+  </div>
+</div>
+
+<!-- FLOATING REST TIMER -->
+<div class="timer-bar">
+  <div class="timer-text">
+    <span>⏱️</span>
+    <span id="timer-display">Rest: Ready</span>
+  </div>
+  <button class="reset-btn" onclick="resetTimer()">Reset</button>
+</div>
+
+<script>
+let countdown;
+let currentWeek = "1";
+
+function getPrefix(wk = currentWeek) {
+  return "wom10w_wk" + wk + "_";
+}
+
+function switchWeek() {
+  currentWeek = document.getElementById('weekSelector').value;
+  const wk = parseInt(currentWeek);
+  const phaseDisp = document.getElementById('phaseDisplay');
+  const phaseDesc = document.getElementById('phaseDesc');
+
+  // Reset 4th round rows
+  const r4Rows = document.querySelectorAll('[id$="_r4_row"]');
+  r4Rows.forEach(r => r.style.display = (wk === 8 || wk === 9) ? 'grid' : 'none');
+
+  // Modifiers and Cues per week
+  if (wk === 1) {
+    phaseDisp.innerHTML = "<option>3 Rounds | 12-15 Reps | Rest: 45s</option>";
+    phaseDesc.innerHTML = "<strong>Week 1: Foundation Baseline.</strong> Pick dumbbell weights with 2-3 reps in reserve (RPE 6-7). Rest: 45s between exercises, 90s between rounds.";
+  } else if (wk === 2) {
+    phaseDisp.innerHTML = "<option>3 Rounds | 12-15 Reps | Rest: 40s</option>";
+    phaseDesc.innerHTML = "<strong>Week 2: Progression.</strong> If you hit 2+ RIR on an exercise last week, bump dumbbell weight. Rest drops to 40s / 85s.";
+  } else if (wk === 3) {
+    phaseDisp.innerHTML = "<option>3 Rounds | 12-15 Reps | Rest: 35s</option>";
+    phaseDesc.innerHTML = "<strong>Week 3: Tempo Integration.</strong> Add 3-1-1 tempo (3s down, 1s pause, 1s up) to Row (Day 1), Lateral Raise (Day 2), Hip Thrust (Day 3).";
+  } else if (wk === 4) {
+    phaseDisp.innerHTML = "<option>3 Rounds | 10-12 Reps | Rest: 30s</option>";
+    phaseDesc.innerHTML = "<strong>Week 4: Overload.</strong> Reps: 10-12. Loop resistance band under feet for Squat & RDL (Day 1), Shoulder Press (Day 2), Lunge (Day 3).";
+  } else if (wk === 5) {
+    phaseDisp.innerHTML = "<option>3 Rounds | 10-12 Reps | Rest: 30s</option>";
+    phaseDesc.innerHTML = "<strong>Week 5: Tempo Overload.</strong> Add 3-1-1 tempo to Squat + Bench (Day 1) and Row + Pulldown (Day 2); slow Woodchop.";
+  } else if (wk === 6) {
+    phaseDisp.innerHTML = "<option>Day 1: 4 Rnds | Day 2-3: 3 Rnds</option>";
+    phaseDesc.innerHTML = "<strong>Week 6: Volume Ramp.</strong> Day 1 picks up a 4th round! Layer band onto Row (Day 1) and Hip Thrust (Day 3).";
+  } else if (wk === 7) {
+    phaseDisp.innerHTML = "<option>Day 1-2: 4 Rnds | Day 3: 3 Rnds</option>";
+    phaseDesc.innerHTML = "<strong>Week 7: Performance.</strong> Reps: 8-12, Rest: 25s. Combine Band + Tempo on Squat (Day 1) and Shoulder Press (Day 2).";
+  } else if (wk === 8) {
+    phaseDisp.innerHTML = "<option>All Days: 4 Rounds | Rest: 20-25s</option>";
+    phaseDesc.innerHTML = "<strong>Week 8: Performance Peak.</strong> All days 4 rounds! Combine band + tempo on Reverse Lunge & Hip Thrust (Day 3).";
+  } else if (wk === 9) {
+    phaseDisp.innerHTML = "<option>All Days: 4 Rounds | Rest: 20s</option>";
+    phaseDesc.innerHTML = "<strong>Week 9: Peak Intensity (RPE 8-9).</strong> Two exercises per day run combined band + tempo. Max focus and control.";
+  } else if (wk === 10) {
+    phaseDisp.innerHTML = "<option>2 Rounds | 10-12 Reps | Rest: 45s</option>";
+    phaseDesc.innerHTML = "<strong>Week 10: Deload & Testing.</strong> Strip all bands & tempo modifiers. 2 rounds only @ Week 1 weights. Test max clean reps on 1 lift/day.";
+  }
+
+  loadWeekData();
+}
+
+function switchDay(dayId, btn) {
+  document.querySelectorAll('.day-content').forEach(d => d.classList.remove('active'));
+  document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(dayId).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toggleSet(btn, seconds) {
+  btn.classList.toggle('done');
+  saveState(btn.id, btn.classList.contains('done'));
+  if (btn.classList.contains('done') && seconds > 0) {
+    startTimer(seconds);
+  }
+}
+
+function startTimer(duration) {
+  clearInterval(countdown);
+  let timeLeft = duration;
+  const display = document.getElementById('timer-display');
+  
+  function update() {
+    let min = Math.floor(timeLeft / 60);
+    let sec = timeLeft % 60;
+    display.textContent = `Rest: ${min}:${sec < 10 ? '0' : ''}${sec}`;
+    if (timeLeft <= 0) {
+      clearInterval(countdown);
+      display.textContent = "Time's up! Next Exercise 🔥";
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    }
+    timeLeft--;
+  }
+  update();
+  countdown = setInterval(update, 1000);
+}
+
+function resetTimer() {
+  clearInterval(countdown);
+  document.getElementById('timer-display').textContent = "Rest: Ready";
+}
+
+function saveInput(el) {
+  localStorage.setItem(getPrefix() + el.id, el.value);
+}
+
+function saveState(id, isDone) {
+  localStorage.setItem(getPrefix() + 'btn_' + id, isDone ? '1' : '0');
+}
+
+function loadWeekData() {
+  document.querySelectorAll('input').forEach(input => {
+    const val = localStorage.getItem(getPrefix() + input.id);
+    input.value = val !== null ? val : '';
+  });
+  document.querySelectorAll('.check-btn').forEach(btn => {
+    const state = localStorage.getItem(getPrefix() + 'btn_' + btn.id);
+    if (state === '1') {
+      btn.classList.add('done');
+    } else {
+      btn.classList.remove('done');
+    }
+  });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  switchWeek();
+});
+</script>
+</body>
+</html>
